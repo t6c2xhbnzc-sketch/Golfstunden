@@ -1,1 +1,1120 @@
-a
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Golf Academy · Ticket System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,400;1,6..96,300;1,6..96,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0f0a;
+    --surface: #111811;
+    --surface2: #172017;
+    --border: #1e2e1e;
+    --border2: #2a3d2a;
+    --green: #4a7c4a;
+    --green-light: #6aab6a;
+    --gold: #c9a84c;
+    --gold-dim: #8a6e2f;
+    --text: #e8ede8;
+    --text-muted: #8a9e8a;
+    --text-dim: #4a5e4a;
+    --white: #f0f5f0;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Jost’, sans-serif;
+font-weight: 300;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Background texture */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse at 20% 50%, rgba(74,124,74,0.06) 0%, transparent 60%),
+radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%);
+pointer-events: none;
+z-index: 0;
+}
+
+/* Grid lines */
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(74,124,74,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(74,124,74,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+.app {
+position: relative;
+z-index: 1;
+max-width: 1200px;
+margin: 0 auto;
+padding: 0 24px;
+}
+
+/* HEADER */
+header {
+padding: 40px 0 32px;
+display: flex;
+align-items: flex-end;
+justify-content: space-between;
+border-bottom: 1px solid var(–border);
+animation: fadeDown 0.6s ease both;
+}
+
+.logo-area {
+display: flex;
+align-items: center;
+gap: 18px;
+}
+
+.logo-mark {
+width: 48px;
+height: 48px;
+border: 1px solid var(–gold-dim);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘Playfair Display’, serif;
+font-size: 20px;
+color: var(–gold);
+}
+
+.logo-text h1 {
+font-family: ‘Playfair Display’, serif;
+font-size: 26px;
+font-weight: 400;
+letter-spacing: 4px;
+color: var(–white);
+text-transform: uppercase;
+}
+
+.logo-text span {
+font-size: 10px;
+letter-spacing: 3px;
+color: var(–text-muted);
+text-transform: uppercase;
+}
+
+.header-right {
+display: flex;
+align-items: center;
+gap: 16px;
+}
+
+.view-toggle {
+display: flex;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 4px;
+overflow: hidden;
+}
+
+.view-toggle button {
+padding: 8px 16px;
+background: transparent;
+border: none;
+color: var(–text-muted);
+font-family: ‘Jost’, sans-serif;
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.view-toggle button.active {
+background: var(–green);
+color: var(–white);
+}
+
+/* MAIN LAYOUT */
+.main {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 2px;
+margin-top: 2px;
+min-height: calc(100vh - 130px);
+}
+
+/* PANELS */
+.panel {
+background: var(–surface);
+padding: 40px 36px;
+animation: fadeUp 0.7s ease both;
+}
+
+.panel:first-child { animation-delay: 0.1s; border-right: 1px solid var(–border); }
+.panel:last-child { animation-delay: 0.2s; }
+
+.panel-label {
+font-size: 9px;
+letter-spacing: 4px;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 28px;
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.panel-label::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: linear-gradient(to right, var(–gold-dim), transparent);
+}
+
+.panel-title {
+font-family: ‘Bodoni Moda’, serif;
+font-size: 40px;
+font-weight: 400;
+line-height: 1.15;
+letter-spacing: 1px;
+color: var(–white);
+margin-bottom: 10px;
+}
+
+.panel-title em {
+font-style: italic;
+font-weight: 300;
+color: var(–green-light);
+}
+
+.panel-sub {
+font-size: 12px;
+font-weight: 200;
+color: var(–text-muted);
+letter-spacing: 0.5px;
+margin-bottom: 36px;
+line-height: 1.7;
+}
+
+/* TICKET TYPE SELECTOR */
+.ticket-types {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 8px;
+margin-bottom: 28px;
+}
+
+.ticket-type {
+border: 1px solid var(–border2);
+border-radius: 4px;
+padding: 14px 12px;
+cursor: pointer;
+transition: all 0.25s;
+text-align: center;
+background: transparent;
+color: var(–text-muted);
+}
+
+.ticket-type:hover {
+border-color: var(–green);
+color: var(–text);
+}
+
+.ticket-type.selected {
+border-color: var(–green-light);
+background: rgba(74,124,74,0.12);
+color: var(–green-light);
+}
+
+.ticket-type .type-icon {
+font-size: 20px;
+margin-bottom: 6px;
+display: block;
+}
+
+.ticket-type .type-name {
+font-size: 9px;
+letter-spacing: 2px;
+text-transform: uppercase;
+display: block;
+}
+
+/* FORM */
+.form-group {
+margin-bottom: 20px;
+}
+
+.form-label {
+display: block;
+font-size: 9px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–text-muted);
+margin-bottom: 8px;
+}
+
+.form-input, .form-select, .form-textarea {
+width: 100%;
+background: var(–bg);
+border: 1px solid var(–border2);
+border-radius: 3px;
+padding: 13px 16px;
+color: var(–text);
+font-family: ‘Jost’, sans-serif;
+font-size: 13px;
+font-weight: 300;
+letter-spacing: 0.3px;
+transition: border-color 0.2s, box-shadow 0.2s;
+outline: none;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+border-color: var(–green);
+box-shadow: 0 0 0 3px rgba(74,124,74,0.1);
+}
+
+.form-select {
+appearance: none;
+cursor: pointer;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘8’ viewBox=‘0 0 12 8’%3E%3Cpath d=‘M1 1l5 5 5-5’ stroke=’%234a7c4a’ fill=‘none’ stroke-width=‘1.5’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: right 14px center;
+}
+
+.form-select option { background: var(–surface); }
+
+.form-textarea {
+resize: vertical;
+min-height: 100px;
+line-height: 1.6;
+}
+
+.submit-btn {
+width: 100%;
+padding: 16px;
+background: var(–green);
+border: none;
+border-radius: 3px;
+color: var(–white);
+font-family: ‘Jost’, sans-serif;
+font-size: 11px;
+font-weight: 300;
+letter-spacing: 4px;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.25s;
+position: relative;
+overflow: hidden;
+margin-top: 8px;
+}
+
+.submit-btn:hover {
+background: var(–green-light);
+transform: translateY(-1px);
+box-shadow: 0 8px 24px rgba(74,124,74,0.25);
+}
+
+.submit-btn:active { transform: translateY(0); }
+
+.submit-btn.loading {
+pointer-events: none;
+opacity: 0.7;
+}
+
+/* AI RESPONSE AREA */
+.ai-response {
+display: none;
+margin-top: 20px;
+border: 1px solid var(–border2);
+border-radius: 4px;
+overflow: hidden;
+animation: fadeUp 0.4s ease both;
+}
+
+.ai-response.visible { display: block; }
+
+.ai-header {
+padding: 10px 16px;
+background: rgba(74,124,74,0.1);
+border-bottom: 1px solid var(–border2);
+font-size: 9px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–green-light);
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.ai-dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(–green-light);
+animation: pulse 1.5s infinite;
+}
+
+.ai-body {
+padding: 16px;
+font-size: 12px;
+line-height: 1.7;
+color: var(–text);
+min-height: 60px;
+}
+
+.typing-cursor {
+display: inline-block;
+width: 2px;
+height: 14px;
+background: var(–green-light);
+animation: blink 0.8s infinite;
+vertical-align: middle;
+margin-left: 2px;
+}
+
+/* TICKET LIST (Admin View) */
+.ticket-list { display: flex; flex-direction: column; gap: 0; }
+
+.ticket-item {
+border-bottom: 1px solid var(–border);
+padding: 20px 0;
+cursor: pointer;
+transition: all 0.2s;
+animation: fadeUp 0.4s ease both;
+}
+
+.ticket-item:hover { padding-left: 8px; }
+
+.ticket-item:last-child { border-bottom: none; }
+
+.ticket-meta {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 6px;
+}
+
+.ticket-badge {
+font-size: 8px;
+letter-spacing: 2px;
+text-transform: uppercase;
+padding: 3px 8px;
+border-radius: 2px;
+border: 1px solid;
+}
+
+.badge-einzel { border-color: var(–gold-dim); color: var(–gold); }
+.badge-frage { border-color: var(–green); color: var(–green-light); }
+.badge-kurs { border-color: #5a6e8a; color: #8aaabf; }
+
+.ticket-status {
+font-size: 8px;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-left: auto;
+}
+
+.status-neu { color: var(–gold); }
+.status-offen { color: var(–green-light); }
+.status-erledigt { color: var(–text-dim); }
+
+.ticket-name {
+font-family: ‘Bodoni Moda’, serif;
+font-size: 20px;
+font-weight: 400;
+letter-spacing: 0.5px;
+color: var(–white);
+margin-bottom: 5px;
+}
+
+.ticket-preview {
+font-size: 11px;
+color: var(–text-muted);
+line-height: 1.5;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+max-width: 380px;
+}
+
+.ticket-date {
+font-size: 9px;
+color: var(–text-dim);
+margin-top: 6px;
+letter-spacing: 1px;
+}
+
+/* STATS BAR */
+.stats-bar {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+border-bottom: 1px solid var(–border);
+margin-bottom: 32px;
+}
+
+.stat {
+padding: 20px 0;
+border-right: 1px solid var(–border);
+text-align: center;
+}
+
+.stat:last-child { border-right: none; }
+
+.stat-num {
+font-family: ‘Bodoni Moda’, serif;
+font-size: 32px;
+font-weight: 300;
+color: var(–green-light);
+line-height: 1;
+margin-bottom: 4px;
+}
+
+.stat-label {
+font-size: 8px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–text-dim);
+}
+
+/* EMPTY STATE */
+.empty-state {
+text-align: center;
+padding: 60px 20px;
+color: var(–text-dim);
+font-size: 11px;
+letter-spacing: 2px;
+}
+
+/* MODAL */
+.modal-overlay {
+display: none;
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.8);
+z-index: 100;
+backdrop-filter: blur(4px);
+animation: fadeIn 0.2s ease;
+}
+
+.modal-overlay.visible { display: flex; align-items: center; justify-content: center; }
+
+.modal {
+background: var(–surface2);
+border: 1px solid var(–border2);
+border-radius: 6px;
+max-width: 560px;
+width: calc(100% - 48px);
+padding: 36px;
+animation: scaleIn 0.3s ease;
+position: relative;
+}
+
+.modal-close {
+position: absolute;
+top: 16px;
+right: 16px;
+background: none;
+border: none;
+color: var(–text-muted);
+cursor: pointer;
+font-size: 18px;
+padding: 4px 8px;
+transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(–text); }
+
+.modal-type {
+font-size: 9px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–gold);
+margin-bottom: 12px;
+}
+
+.modal-name {
+font-family: ‘Bodoni Moda’, serif;
+font-size: 32px;
+font-weight: 400;
+font-style: italic;
+letter-spacing: 0.5px;
+color: var(–white);
+margin-bottom: 20px;
+}
+
+.modal-detail {
+font-size: 11px;
+line-height: 1.7;
+color: var(–text-muted);
+padding: 16px;
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 3px;
+margin-bottom: 16px;
+}
+
+.modal-ai {
+border: 1px solid rgba(74,124,74,0.3);
+border-radius: 3px;
+overflow: hidden;
+}
+
+.modal-ai-header {
+padding: 8px 14px;
+background: rgba(74,124,74,0.08);
+font-size: 8px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–green-light);
+border-bottom: 1px solid rgba(74,124,74,0.2);
+}
+
+.modal-ai-body {
+padding: 14px;
+font-size: 11px;
+line-height: 1.7;
+color: var(–text);
+}
+
+.modal-actions {
+display: flex;
+gap: 10px;
+margin-top: 20px;
+}
+
+.btn-secondary {
+flex: 1;
+padding: 12px;
+background: transparent;
+border: 1px solid var(–border2);
+border-radius: 3px;
+color: var(–text-muted);
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+letter-spacing: 2px;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.btn-secondary:hover { border-color: var(–green); color: var(–text); }
+
+.btn-primary {
+flex: 1;
+padding: 12px;
+background: var(–green);
+border: none;
+border-radius: 3px;
+color: var(–white);
+font-family: ‘Jost’, sans-serif;
+font-size: 9px;
+letter-spacing: 2px;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.btn-primary:hover { background: var(–green-light); }
+
+/* TOAST */
+.toast {
+position: fixed;
+bottom: 32px;
+right: 32px;
+background: var(–surface2);
+border: 1px solid var(–green);
+border-radius: 4px;
+padding: 14px 20px;
+font-size: 11px;
+color: var(–green-light);
+letter-spacing: 1px;
+z-index: 200;
+transform: translateY(20px);
+opacity: 0;
+transition: all 0.3s;
+pointer-events: none;
+}
+
+.toast.show {
+transform: translateY(0);
+opacity: 1;
+}
+
+/* ANIMATIONS */
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-12px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+from { opacity: 0; }
+to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+from { opacity: 0; transform: scale(0.95); }
+to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.3; }
+}
+
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+.main { grid-template-columns: 1fr; }
+.panel:first-child { border-right: none; border-bottom: 1px solid var(–border); }
+}
+</style>
+
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="logo-area">
+      <div class="logo-mark">⛳</div>
+      <div class="logo-text">
+        <h1>Golf Academy</h1>
+        <span>Ticket &amp; Buchungssystem</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="view-toggle">
+        <button class="active" id="btnSchueler" onclick="setView('schueler')">Schüler</button>
+        <button id="btnTrainer" onclick="setView('trainer')">Trainer</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main">
+    <!-- SCHÜLER PANEL -->
+    <div class="panel" id="panelSchueler">
+      <div class="panel-label">Neues Ticket</div>
+      <h2 class="panel-title">Wie kann ich<br><em>helfen?</em></h2>
+      <p class="panel-sub">Buche eine Lektion, stelle eine Frage oder melde dich für einen Kurs an.</p>
+
+```
+  <div class="ticket-types">
+    <div class="ticket-type" id="type-einzel" onclick="selectType('einzel')">
+      <span class="type-icon">🏌️</span>
+      <span class="type-name">Einzel</span>
+    </div>
+    <div class="ticket-type" id="type-kurs" onclick="selectType('kurs')">
+      <span class="type-icon">👥</span>
+      <span class="type-name">Kurs</span>
+    </div>
+    <div class="ticket-type" id="type-frage" onclick="selectType('frage')">
+      <span class="type-icon">💬</span>
+      <span class="type-name">Frage</span>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">Dein Name</label>
+    <input type="text" class="form-input" id="inputName" placeholder="Max Mustermann">
+  </div>
+
+  <div class="form-group">
+    <label class="form-label">E-Mail</label>
+    <input type="email" class="form-input" id="inputEmail" placeholder="max@beispiel.de">
+  </div>
+
+  <div class="form-group" id="groupLevel" style="display:none">
+    <label class="form-label">Dein Niveau</label>
+    <select class="form-select" id="inputLevel">
+      <option value="">Bitte wählen …</option>
+      <option>Anfänger (kein HCP)</option>
+      <option>Einsteiger (HCP 37–54)</option>
+      <option>Fortgeschritten (HCP 18–36)</option>
+      <option>Erfahren (HCP unter 18)</option>
+    </select>
+  </div>
+
+  <div class="form-group" id="groupKurs" style="display:none">
+    <label class="form-label">Kurs / Programm</label>
+    <select class="form-select" id="inputKurs">
+      <option value="">Bitte wählen …</option>
+      <option>Anfängerkurs (4 Termine)</option>
+      <option>Short Game Intensiv</option>
+      <option>Regelkunde & Etikette</option>
+      <option>Junior Golf Camp</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label class="form-label" id="msgLabel">Nachricht</label>
+    <textarea class="form-textarea" id="inputMsg" placeholder="Was möchtest du mir mitteilen?"></textarea>
+  </div>
+
+  <button class="submit-btn" id="btnSubmit" onclick="submitTicket()">
+    Ticket absenden
+  </button>
+
+  <!-- AI Response -->
+  <div class="ai-response" id="aiResponse">
+    <div class="ai-header">
+      <div class="ai-dot"></div>
+      KI-Assistent antwortet
+    </div>
+    <div class="ai-body" id="aiBody"></div>
+  </div>
+</div>
+
+<!-- TRAINER PANEL -->
+<div class="panel" id="panelTrainer" style="display:none">
+  <div class="panel-label">Trainer Dashboard</div>
+  <h2 class="panel-title">Offene<br><em>Tickets</em></h2>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-label">Gesamt</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statNeu">0</div>
+      <div class="stat-label">Neu</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="statOffen">0</div>
+      <div class="stat-label">Offen</div>
+    </div>
+  </div>
+
+  <div class="ticket-list" id="ticketList">
+    <div class="empty-state">Noch keine Tickets vorhanden</div>
+  </div>
+</div>
+
+<!-- DETAIL PANEL (right side when trainer) -->
+<div class="panel" id="panelRight">
+  <div class="panel-label">Übersicht</div>
+  <h2 class="panel-title">Wähle einen<br><em>Kanal</em></h2>
+  <p class="panel-sub">Links: Schüleransicht — hier kommen Tickets rein.<br>Rechts: Trainer-Dashboard mit allen Tickets und KI-Zusammenfassungen.</p>
+
+  <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 16px;">
+    <div style="border: 1px solid var(--border2); border-radius: 4px; padding: 20px;">
+      <div style="font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px;">Einzel-Lektion</div>
+      <p style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">Schüler bucht einen 1:1-Termin. KI gibt sofort eine Bestätigung und Hinweise zur Vorbereitung.</p>
+    </div>
+    <div style="border: 1px solid var(--border2); border-radius: 4px; padding: 20px;">
+      <div style="font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--green-light); margin-bottom: 8px;">Frage / Support</div>
+      <p style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">KI beantwortet Routinefragen sofort. Komplexe Themen werden an dich weitergeleitet.</p>
+    </div>
+    <div style="border: 1px solid var(--border2); border-radius: 4px; padding: 20px;">
+      <div style="font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #8aaabf; margin-bottom: 8px;">Kurs & Gruppe</div>
+      <p style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">Anmeldung für Gruppen-programme. KI bestätigt die Registrierung und informiert über Details.</p>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- MODAL -->
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalBtn()">✕</button>
+    <div class="modal-type" id="mType"></div>
+    <div class="modal-name" id="mName"></div>
+    <div class="modal-detail" id="mDetail"></div>
+    <div class="modal-ai">
+      <div class="modal-ai-header">🤖 KI-Zusammenfassung</div>
+      <div class="modal-ai-body" id="mAI">Wird geladen …</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="markErledigt()">Als erledigt markieren</button>
+      <button class="btn-primary" onclick="closeModalBtn()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ──────────────────────────────────────────────
+// STATE
+// ──────────────────────────────────────────────
+let currentView = 'schueler';
+let selectedType = '';
+let tickets = [];
+let currentTicketId = null;
+
+// ──────────────────────────────────────────────
+// VIEW TOGGLE
+// ──────────────────────────────────────────────
+function setView(v) {
+  currentView = v;
+  document.getElementById('btnSchueler').classList.toggle('active', v === 'schueler');
+  document.getElementById('btnTrainer').classList.toggle('active', v === 'trainer');
+
+  if (v === 'schueler') {
+    document.getElementById('panelSchueler').style.display = '';
+    document.getElementById('panelTrainer').style.display = 'none';
+    document.getElementById('panelRight').style.display = '';
+  } else {
+    document.getElementById('panelSchueler').style.display = 'none';
+    document.getElementById('panelTrainer').style.display = '';
+    document.getElementById('panelRight').style.display = '';
+    renderTickets();
+  }
+}
+
+// ──────────────────────────────────────────────
+// TYPE SELECTION
+// ──────────────────────────────────────────────
+function selectType(t) {
+  selectedType = t;
+  ['einzel','kurs','frage'].forEach(x => {
+    document.getElementById('type-'+x).classList.toggle('selected', x === t);
+  });
+
+  const gLevel = document.getElementById('groupLevel');
+  const gKurs = document.getElementById('groupKurs');
+  const msgLabel = document.getElementById('msgLabel');
+  const msgArea = document.getElementById('inputMsg');
+
+  gLevel.style.display = (t === 'einzel') ? '' : 'none';
+  gKurs.style.display = (t === 'kurs') ? '' : 'none';
+
+  if (t === 'frage') {
+    msgLabel.textContent = 'Deine Frage';
+    msgArea.placeholder = 'Was möchtest du wissen?';
+  } else if (t === 'einzel') {
+    msgLabel.textContent = 'Wunschtermin & Anliegen';
+    msgArea.placeholder = 'z. B. Dienstag nachmittag, möchte am Abschlag arbeiten …';
+  } else {
+    msgLabel.textContent = 'Anmerkungen';
+    msgArea.placeholder = 'Weitere Infos oder Wünsche …';
+  }
+}
+
+// GOOGLE SHEETS WEBHOOK
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxcVm95HhLwAqLf9IATTAkUJiY7CxEKJqtU_mybiTLckAWCPYj_WxzkNmYZSXWlHOhO3w/exec';
+async function saveToSheets(ticket) {
+  try {
+    await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ticket) });
+  } catch(e) { console.warn('Sheets Fehler:', e); }
+}
+
+// ──────────────────────────────────────────────
+// SUBMIT
+// ──────────────────────────────────────────────
+async function submitTicket() {
+  const name = document.getElementById('inputName').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  const msg = document.getElementById('inputMsg').value.trim();
+
+  if (!name || !email || !msg || !selectedType) {
+    showToast('Bitte alle Felder ausfüllen und einen Typ wählen.');
+    return;
+  }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.classList.add('loading');
+  btn.textContent = 'Wird verarbeitet …';
+
+  // Show AI response area immediately with typing
+  const aiResponse = document.getElementById('aiResponse');
+  const aiBody = document.getElementById('aiBody');
+  aiResponse.classList.add('visible');
+  aiBody.innerHTML = '<span class="typing-cursor"></span>';
+
+  // Build prompt for Claude
+  const typeLabels = { einzel: 'Einzel-Lektion', kurs: 'Kurs/Gruppenstunde', frage: 'Frage/Support' };
+  const level = document.getElementById('inputLevel').value;
+  const kurs = document.getElementById('inputKurs').value;
+
+  let contextInfo = '';
+  if (level) contextInfo += ` Spielniveau: ${level}.`;
+  if (kurs) contextInfo += ` Gewünschter Kurs: ${kurs}.`;
+
+  const systemPrompt = `Du bist ein freundlicher KI-Assistent für eine Golf Academy. Du antwortest auf Anfragen von Schülern höflich, professionell und auf Deutsch. Du gibst KEINE Preisinformationen an. Bei Buchungsanfragen bestätigst du die Anfrage und sagst, dass sich der Trainer melden wird. Bei Fragen zum Golf gibst du hilfreiche, kompetente Antworten. Halte deine Antwort kurz (2-4 Sätze).`;
+
+  const userPrompt = `Ein Schüler namens ${name} hat ein Ticket vom Typ "${typeLabels[selectedType]}" eingereicht.${contextInfo} Nachricht: "${msg}"`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userPrompt }]
+      })
+    });
+
+    const data = await response.json();
+    const aiText = data.content?.[0]?.text || "Danke für dein Ticket! Der Trainer wird sich bald bei dir melden.";
+
+    // Animate typing
+    aiBody.innerHTML = '';
+    await typeText(aiBody, aiText);
+
+    // Save ticket
+    const ticket = {
+      id: Date.now(),
+      name, email, msg, type: selectedType,
+      level: level || null, kurs: kurs || null,
+      aiResponse: aiText,
+      status: 'neu',
+      date: new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    };
+    tickets.unshift(ticket);
+    saveToSheets(ticket);
+
+    showToast('✓ Ticket gespeichert & in Google Sheets eingetragen');
+
+    // Reset form
+    btn.classList.remove('loading');
+    btn.textContent = 'Ticket absenden';
+
+  } catch (e) {
+    aiBody.innerHTML = 'Danke für dein Ticket! Der Trainer wird sich in Kürze bei dir melden.';
+    btn.classList.remove('loading');
+    btn.textContent = 'Ticket absenden';
+  }
+}
+
+async function typeText(el, text) {
+  el.innerHTML = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  el.appendChild(cursor);
+
+  for (let i = 0; i < text.length; i++) {
+    el.insertBefore(document.createTextNode(text[i]), cursor);
+    await sleep(18);
+  }
+  cursor.remove();
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ──────────────────────────────────────────────
+// RENDER TICKETS
+// ──────────────────────────────────────────────
+function renderTickets() {
+  const list = document.getElementById('ticketList');
+  const statTotal = document.getElementById('statTotal');
+  const statNeu = document.getElementById('statNeu');
+  const statOffen = document.getElementById('statOffen');
+
+  statTotal.textContent = tickets.length;
+  statNeu.textContent = tickets.filter(t => t.status === 'neu').length;
+  statOffen.textContent = tickets.filter(t => t.status === 'offen').length;
+
+  if (tickets.length === 0) {
+    list.innerHTML = '<div class="empty-state">Noch keine Tickets vorhanden</div>';
+    return;
+  }
+
+  const typeLabels = { einzel: 'Einzel-Lektion', kurs: 'Kurs', frage: 'Frage' };
+  const badgeClasses = { einzel: 'badge-einzel', kurs: 'badge-kurs', frage: 'badge-frage' };
+  const statusClasses = { neu: 'status-neu', offen: 'status-offen', erledigt: 'status-erledigt' };
+  const statusLabels = { neu: '● Neu', offen: '○ Offen', erledigt: '✓ Erledigt' };
+
+  list.innerHTML = tickets.map((t, i) => `
+    <div class="ticket-item" style="animation-delay:${i*0.05}s" onclick="openTicket(${t.id})">
+      <div class="ticket-meta">
+        <span class="ticket-badge ${badgeClasses[t.type]}">${typeLabels[t.type]}</span>
+        <span class="ticket-status ${statusClasses[t.status]}">${statusLabels[t.status]}</span>
+      </div>
+      <div class="ticket-name">${t.name}</div>
+      <div class="ticket-preview">${t.msg}</div>
+      <div class="ticket-date">${t.date} · ${t.email}</div>
+    </div>
+  `).join('');
+}
+
+// ──────────────────────────────────────────────
+// MODAL
+// ──────────────────────────────────────────────
+function openTicket(id) {
+  currentTicketId = id;
+  const t = tickets.find(x => x.id === id);
+  if (!t) return;
+
+  const typeLabels = { einzel: 'Einzel-Lektion', kurs: 'Kurs/Gruppenstunde', frage: 'Frage/Support' };
+  document.getElementById('mType').textContent = typeLabels[t.type];
+  document.getElementById('mName').textContent = t.name;
+
+  let detail = `E-Mail: ${t.email}\n\n${t.msg}`;
+  if (t.level) detail += `\n\nSpielniveau: ${t.level}`;
+  if (t.kurs) detail += `\nKurs: ${t.kurs}`;
+  document.getElementById('mDetail').textContent = detail;
+  document.getElementById('mAI').textContent = t.aiResponse || '—';
+
+  document.getElementById('modalOverlay').classList.add('visible');
+
+  if (t.status === 'neu') {
+    t.status = 'offen';
+    renderTickets();
+  }
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalBtn();
+}
+
+function closeModalBtn() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+  currentTicketId = null;
+}
+
+function markErledigt() {
+  if (!currentTicketId) return;
+  const t = tickets.find(x => x.id === currentTicketId);
+  if (t) { t.status = 'erledigt'; renderTickets(); }
+  closeModalBtn();
+  showToast('✓ Ticket als erledigt markiert');
+}
+
+// ──────────────────────────────────────────────
+// TOAST
+// ──────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ──────────────────────────────────────────────
+// DEMO TICKETS
+// ──────────────────────────────────────────────
+tickets = [
+  { id: 1001, name: 'Thomas Berger', email: 't.berger@mail.de', msg: 'Ich würde gerne nächste Woche eine Lektion zum Thema Putting buchen. Dienstag oder Donnerstag wäre perfekt.', type: 'einzel', level: 'Fortgeschritten (HCP 18–36)', kurs: null, aiResponse: 'Hallo Thomas, vielen Dank für deine Buchungsanfrage! Ich habe dein Anliegen erfasst und der Trainer wird sich in Kürze bei dir melden, um einen passenden Termin zu vereinbaren. Dienstag und Donnerstag wurden als Wunschtermine vermerkt.', status: 'neu', date: '11.05.2026, 09:42' },
+  { id: 1002, name: 'Julia Mayer', email: 'julia.m@web.de', msg: 'Gibt es noch freie Plätze im Short Game Intensiv-Kurs? Ich bin Anfängerin und würde gerne teilnehmen.', type: 'kurs', level: 'Anfänger (kein HCP)', kurs: 'Short Game Intensiv', aiResponse: 'Hallo Julia, schön von dir zu hören! Deine Anfrage für den Short Game Intensiv-Kurs wurde erfasst. Der Trainer prüft die Verfügbarkeit und wird sich zeitnah mit allen Details bei dir melden.', status: 'offen', date: '10.05.2026, 16:15' },
+  { id: 1003, name: 'Markus Hoffmann', email: 'm.hoffmann@firma.de', msg: 'Wie oft sollte ich als Anfänger trainieren, um schnell Fortschritte zu machen?', type: 'frage', level: null, kurs: null, aiResponse: 'Hallo Markus, als Anfänger empfehlen sich 2–3 Einheiten pro Woche, damit das Muskelgedächtnis sich entwickeln kann ohne Überlastung. Regelmäßige kurze Sessions sind effektiver als seltene lange Einheiten. Ergänzend helfen tägliche Putting-Übungen zu Hause enorm.', status: 'erledigt', date: '09.05.2026, 11:00' }
+];
+</script>
+
+</body>
+</html>
