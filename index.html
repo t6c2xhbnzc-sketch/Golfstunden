@@ -914,6 +914,14 @@ function selectType(t) {
   }
 }
 
+// GOOGLE SHEETS WEBHOOK
+const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbxcVm95HhLwAqLf9IATTAkUJiY7CxEKJqtU_mybiTLckAWCPYj_WxzkNmYZSXWlHOhO3w/exec';
+async function saveToSheets(ticket) {
+  try {
+    await fetch(SHEETS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ticket) });
+  } catch(e) { console.warn('Sheets Fehler:', e); }
+}
+
 // ──────────────────────────────────────────────
 // SUBMIT
 // ──────────────────────────────────────────────
@@ -979,8 +987,9 @@ async function submitTicket() {
       date: new Date().toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     };
     tickets.unshift(ticket);
+    saveToSheets(ticket);
 
-    showToast('✓ Ticket erfolgreich eingereicht');
+    showToast('✓ Ticket gespeichert & in Google Sheets eingetragen');
 
     // Reset form
     btn.classList.remove('loading');
